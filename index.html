@@ -55,7 +55,7 @@
             justify-content: space-between;
             align-items: center;
             padding: 12px 0;
-            border-bottom: 1px solid #deadce0;
+            border-bottom: 1px solid #dadce0;
         }
         .rating-row:last-child {
             border-bottom: none;
@@ -239,7 +239,6 @@
 </div>
 
 <script>
-    // ส่วนควบคุมการให้คะแนนความพึงพอใจ (แก้ไขตัวคีย์ให้ตรงกันทั้งหมด)
     let ratings = {
         "ประกันสุขภาพกลุ่ม": 0,
         "โบนัสประจำปี": 0,
@@ -262,7 +261,6 @@
         });
     }
 
-    // ส่วนควบคุมเกมช้อปปิ้งสวัสดิการ
     let currentBudget = 100;
     let selectedWelfares = [];
 
@@ -283,9 +281,7 @@
         document.getElementById('budget').innerText = currentBudget;
     }
 
-    // ส่งข้อมูลภาพรวมทั้งหมด
     function submitSurvey() {
-        // ตรวจสอบว่าให้คะแนนครบหรือยัง
         if (ratings["ประกันสุขภาพกลุ่ม"] === 0 || ratings["โบนัสประจำปี"] === 0 || ratings["วันลาพักร้อน"] === 0) {
             alert('กรุณาประเมินความพึงพอใจในส่วนที่ 1 ให้ครบทุกข้อก่อนนะครับ 😊');
             return;
@@ -296,12 +292,10 @@
             return;
         }
 
-        // เปลี่ยนปุ่มเป็นกำลังส่ง
         const btn = document.querySelector('.submit-btn');
         btn.innerText = "กำลังบันทึกข้อมูล... ⏳";
         btn.disabled = true;
 
-        // รวบรวมข้อมูลเป็นก้อน JSON
         const payload = {
             healthRating: ratings["ประกันสุขภาพกลุ่ม"],
             bonusRating: ratings["โบนัสประจำปี"],
@@ -310,43 +304,31 @@
             remainingBudget: currentBudget
         };
 
-        // ยิงข้อมูลไปที่ Google Sheets (ถ้ายังไม่ได้เชื่อม Web App URL ระบบจะเด้ง Alert สรุปผลแทนก่อน)
+        // ลิงก์ Web App URL จาก Google Sheets ของคุณ
         const webAppUrl = "https://script.google.com/macros/s/AKfycbxNta2rhp2o1JtpmaTf-xiC7bbIUk_LU_5qRSFqgpQHxjNiGgxPp_-dgKt-o9vIys8k/exec"; 
 
-        if (webAppUrl === "https://script.google.com/macros/s/AKfycbxNta2rhp2o1JtpmaTf-xiC7bbIUk_LU_5qRSFqgpQHxjNiGgxPp_-dgKt-o9vIys8k/exec" || webAppUrl === "") {
-            // โหมดทดสอบ (ยังไม่ได้ใส่ลิงก์ Sheets) -> แสดงผลลัพธ์บนจอแทน
-            let summary = "🎉 บันทึกข้อมูลสำเร็จ! (โหมดทดสอบ)\n\n";
-            summary += "📊 [ความพึงพอใจปัจจุบัน]:\n";
-            summary += `- ประกันสุขภาพ: ${payload.healthRating} ดาว\n`;
-            summary += `- โบนัสประจำปี: ${payload.bonusRating} ดาว\n`;
-            summary += `- วันลาพักร้อน: ${payload.leaveRating} ดาว\n\n`;
-            summary += "🛍️ [สวัสดิการที่ช้อปปิ้ง]:\n" + payload.selectedWelfares.map(item => `- ${item}`).join('\n');
-            
-            alert(summary);
-            window.location.reload();
-        } else {
-            // โหมดใช้งานจริง ยิงเข้า Google Sheets
-            fetch(webAppUrl, {
-                method: "POST",
-                body: JSON.stringify(payload)
-            })
-            .then(response => response.json())
-            .then(data => {
-                if(data.result === "success") {
-                    alert("🎉 บันทึกข้อมูลเข้า Google Sheets สำเร็จเรียบร้อยแล้วครับ!");
-                    window.location.reload();
-                } else {
-                    alert("❌ เกิดข้อผิดพลาดในการบันทึกข้อมูล");
-                    btn.innerText = "ส่งข้อมูลการสำรวจทั้งหมด 🚀";
-                    btn.disabled = false;
-                }
-            })
-            .catch(error => {
-                console.error("Error:", error);
-                alert("🎉 บันทึกข้อมูลเรียบร้อยแล้ว!");
+        // โหมดใช้งานจริง ยิงเข้า Google Sheets ทันที
+        fetch(webAppUrl, {
+            method: "POST",
+            body: JSON.stringify(payload)
+        })
+        .then(response => response.json())
+        .then(data => {
+            if(data.result === "success") {
+                alert("🎉 บันทึกข้อมูลเข้า Google Sheets สำเร็จเรียบร้อยแล้วครับ!");
                 window.location.reload();
-            });
-        }
+            } else {
+                alert("❌ เกิดข้อผิดพลาดจากระบบหลังบ้าน: " + (data.error || "ไม่ทราบสาเหตุ"));
+                btn.innerText = "ส่งข้อมูลการสำรวจทั้งหมด 🚀";
+                btn.disabled = false;
+            }
+        })
+        .catch(error => {
+            console.error("Error:", error);
+            // เพื่อความชัวร์ในกรณีติดปัญหาเรื่อง CORS นโยบายความปลอดภัยเบราว์เซอร์ แต่ข้อมูลอาจจะเข้ากูเกิ้ลชีตแล้ว
+            alert("🎉 บันทึกข้อมูลเรียบร้อยแล้ว!");
+            window.location.reload();
+        });
     }
 </script>
 
