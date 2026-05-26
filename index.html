@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>เกมช้อปปิ้งสวัสดิการพนักงาน</title>
+    <title>แบบสำรวจและเกมช้อปปิ้งสวัสดิการ</title>
     <style>
         * {
             box-sizing: border-box;
@@ -28,14 +28,57 @@
         h1 {
             text-align: center;
             color: #1a73e8;
-            margin-bottom: 10px;
+            margin-bottom: 5px;
         }
-        .instructions {
+        .subtitle {
             text-align: center;
             color: #5f6368;
             margin-bottom: 30px;
         }
-        /* แถบคะแนนคงเหลือคงที่ด้านบน */
+        h2 {
+            color: #202124;
+            border-left: 5px solid #1a73e8;
+            padding-left: 10px;
+            margin-top: 30px;
+            font-size: 20px;
+        }
+        
+        /* โซนที่ 1: ความพึงพอใจ (Rating) */
+        .rating-section {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+        }
+        .rating-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid #deadce0;
+        }
+        .rating-row:last-child {
+            border-bottom: none;
+        }
+        .welfare-name {
+            font-weight: 500;
+            color: #3c4043;
+        }
+        .stars {
+            display: flex;
+            gap: 5px;
+        }
+        .star {
+            font-size: 24px;
+            cursor: pointer;
+            color: #dadce0;
+            transition: color 0.1s;
+        }
+        .star.active {
+            color: #fbbc05;
+        }
+
+        /* โซนที่ 2: คะแนนคงเหลือคงที่ */
         .budget-sticky {
             position: sticky;
             top: 10px;
@@ -50,7 +93,8 @@
             margin-bottom: 25px;
             z-index: 100;
         }
-        /* รายการสวัสดิการ */
+
+        /* รายการสวัสดิการช้อปปิ้ง */
         .grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
@@ -97,11 +141,12 @@
             background: #34a853;
             color: white;
         }
+
         /* ปุ่มส่งข้อมูล */
         .submit-btn {
             display: block;
             width: 100%;
-            background: #1a73e8;
+            background: #34a853;
             color: white;
             border: none;
             padding: 15px;
@@ -110,84 +155,198 @@
             border-radius: 8px;
             cursor: pointer;
             transition: background 0.2s;
+            box-shadow: 0 4px 6px rgba(52, 168, 83, 0.2);
         }
         .submit-btn:hover {
-            background: #1557b0;
+            background: #2d8e47;
         }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h1>🛍️ ช้อปปิ้งสวัสดิการตามใจคุณ</h1>
-    <p class="instructions">บริษัทมอบงบประมาณจำลองให้คุณคนละ 100 คะแนน เลือกสวัสดิการที่ตอบโจทย์ชีวิตคุณมากที่สุดจนกว่าแต้มจะหมด!</p>
+    <h1>📊 แบบสำรวจสวัสดิการพนักงาน</h1>
+    <p class="subtitle">เสียงของคุณมีความสำคัญ มาร่วมดีไซน์สวัสดิการที่ตอบโจทย์เราไปด้วยกันครับ</p>
+    
+    <h2>ส่วนที่ 1: ความพึงพอใจต่อสวัสดิการในปัจจุบัน</h2>
+    <div class="rating-section">
+        <div class="rating-row" data-welfare="ประกันสุขภาพกลุ่ม">
+            <span class="welfare-name">1. ประกันสุขภาพกลุ่ม (IPD/OPD)</span>
+            <div class="stars">
+                <span class="star" onclick="rate(this, 1)">★</span>
+                <span class="star" onclick="rate(this, 2)">★</span>
+                <span class="star" onclick="rate(this, 3)">★</span>
+                <span class="star" onclick="rate(this, 4)">★</span>
+                <span class="star" onclick="rate(this, 5)">★</span>
+            </div>
+        </div>
+        <div class="rating-row" data-welfare="โบนัสประจำปี">
+            <span class="welfare-name">2. โบนัสและการปรับเงินเดือนประจำปี</span>
+            <div class="stars">
+                <span class="star" onclick="rate(this, 1)">★</span>
+                <span class="star" onclick="rate(this, 2)">★</span>
+                <span class="star" onclick="rate(this, 3)">★</span>
+                <span class="star" onclick="rate(this, 4)">★</span>
+                <span class="star" onclick="rate(this, 5)">★</span>
+            </div>
+        </div>
+        <div class="rating-row" data-welfare="วันลาพักร้อน">
+            <span class="welfare-name">3. จำนวนวันลาพักร้อนและการลากิจ</span>
+            <div class="stars">
+                <span class="star" onclick="rate(this, 1)">★</span>
+                <span class="star" onclick="rate(this, 2)">★</span>
+                <span class="star" onclick="rate(this, 3)">★</span>
+                <span class="star" onclick="rate(this, 4)">★</span>
+                <span class="star" onclick="rate(this, 5)">★</span>
+            </div>
+        </div>
+    </div>
+
+    <h2>ส่วนที่ 2: เกมช้อปปิ้งเลือกสวัสดิการในอนาคต</h2>
+    <p style="color: #5f6368; font-size: 14px; margin-bottom: 15px;">สมมติว่าคุณมีเงิน 100 คะแนน ลองเลือกซื้อสวัสดิการที่คุณอยากให้บริษัทเพิ่มในอนาคต</p>
     
     <div class="budget-sticky">
-        คะแนนคงเหลือของคุณ: <span id="budget">100</span> คะแนน
+        คะแนนคงเหลือสำหรับช้อปปิ้ง: <span id="budget">100</span> คะแนน
     </div>
 
     <div class="grid">
-        <div class="card" onclick="toggleSelect(this, 40, 'ประกันสุขภาพอัปเกรด')">
-            <div class="icon">🏥</div>
-            <div class="title">ประกันสุขภาพอัปเกรด</div>
+        <div class="card" onclick="toggleSelect(this, 40, 'ประกันสุขภาพพรีเมียม (บวกทันตกรรม)')">
+            <div class="icon">🦷</div>
+            <div class="title">ประกันสุขภาพพรีเมียม + ทำฟัน</div>
             <div class="price">40 คะแนน</div>
         </div>
 
-        <div class="card" onclick="toggleSelect(this, 30, 'เงินสนับสนุนฟิตเนส')">
-            <div class="icon">🏋️‍♂️</div>
-            <div class="title">เงินสนับสนุนฟิตเนส</div>
+        <div class="card" onclick="toggleSelect(this, 30, 'เงินสนับสนุนฟิตเนส/นวดผ่อนคลาย')">
+            <div class="icon">💆‍♂️</div>
+            <div class="title">ค่าฟิตเนส / นวดผ่อนคลาย</div>
             <div class="price">30 คะแนน</div>
         </div>
 
-        <div class="card" onclick="toggleSelect(this, 20, 'คอร์สเรียนตามใจชอบ')">
-            <div class="icon">📚</div>
-            <div class="title">คอร์สเรียนตามใจชอบ</div>
+        <div class="card" onclick="toggleSelect(this, 20, 'คอร์สเรียน/ทุนพัฒนาตัวเอง')">
+            <div class="icon">🚀</div>
+            <div class="title">ทุนพัฒนาและเรียนรู้ออนไลน์</div>
             <div class="price">20 คะแนน</div>
         </div>
 
-        <div class="card" onclick="toggleSelect(this, 10, 'วันหยุดพิเศษวันเกิด')">
-            <div class="icon">🎂</div>
-            <div class="title">วันหยุดพิเศษวันเกิด</div>
+        <div class="card" onclick="toggleSelect(this, 10, 'วันหยุดพิเศษในวันเกิด')">
+            <div class="icon">🎁</div>
+            <div class="title">วันหยุดพิเศษในวันเกิด</div>
             <div class="price">10 คะแนน</div>
         </div>
     </div>
 
-    <button class="submit-btn" onclick="submitWelfare()">ส่งตะกร้าสวัสดิการของฉัน 🚀</button>
+    <button class="submit-btn" onclick="submitSurvey()">ส่งข้อมูลการสำรวจทั้งหมด 🚀</button>
 </div>
 
 <script>
+    // ส่วนควบคุมการให้คะแนนความพึงพอใจ (แก้ไขตัวคีย์ให้ตรงกันทั้งหมด)
+    let ratings = {
+        "ประกันสุขภาพกลุ่ม": 0,
+        "โบนัสประจำปี": 0,
+        "วันลาพักร้อน": 0
+    };
+
+    function rate(starElem, score) {
+        const row = starElem.closest('.rating-row');
+        const welfare = row.getAttribute('data-welfare');
+        const allStars = row.querySelectorAll('.star');
+        
+        ratings[welfare] = score;
+
+        allStars.forEach((star, index) => {
+            if (index < score) {
+                star.classList.add('active');
+            } else {
+                star.classList.remove('active');
+            }
+        });
+    }
+
+    // ส่วนควบคุมเกมช้อปปิ้งสวัสดิการ
     let currentBudget = 100;
     let selectedWelfares = [];
 
     function toggleSelect(card, price, name) {
-        // ตรวจสอบว่าสวัสดิการนี้เคยถูกเลือกไปแล้วหรือยัง
         if (card.classList.contains('selected')) {
-            // ลบออกถ้าพนักงานยกเลิกการเลือก
             card.classList.remove('selected');
             currentBudget += price;
             selectedWelfares = selectedWelfares.filter(item => item !== name);
         } else {
-            // ตรวจสอบว่าคะแนนพอกดซื้อไหม
             if (currentBudget >= price) {
                 card.classList.add('selected');
                 currentBudget -= price;
                 selectedWelfares.push(name);
             } else {
-                alert('⚠️ คะแนนของคุณไม่เพียงพอสำหรับสวัสดิการชิ้นนี้แล้วครับ ลองยกเลิกอันอื่นก่อนนะ!');
+                alert('⚠️ คะแนนช้อปปิ้งไม่พอแล้วครับ ลองเอาชิ้นอื่นออกก่อนนะ!');
             }
         }
-        // อัปเดตตัวเลขบนหน้าจอ
         document.getElementById('budget').innerText = currentBudget;
     }
 
-    function submitWelfare() {
-        if (selectedWelfares.length === 0) {
-            alert('คุณยังไม่ได้เลือกสวัสดิการชิ้นไหนเลย ลองเลือกดูหน่อยสิครับ!');
+    // ส่งข้อมูลภาพรวมทั้งหมด
+    function submitSurvey() {
+        // ตรวจสอบว่าให้คะแนนครบหรือยัง
+        if (ratings["ประกันสุขภาพกลุ่ม"] === 0 || ratings["โบนัสประจำปี"] === 0 || ratings["วันลาพักร้อน"] === 0) {
+            alert('กรุณาประเมินความพึงพอใจในส่วนที่ 1 ให้ครบทุกข้อก่อนนะครับ 😊');
             return;
         }
-        alert('🎉 บันทึกข้อมูลสำเร็จ!\nสวัสดิการที่คุณเลือกคือ:\n' + selectedWelfares.join('\n') + '\n\nคะแนนเหลือของคุณ: ' + currentBudget);
-        
-        // ตรงนี้ในอนาคตเราสามารถเขียนให้โค้ดยิงข้อมูลไปเก็บใน Google Sheets หรือหลังบ้านขององค์กรได้ครับ
+
+        if (selectedWelfares.length === 0) {
+            alert('อย่าลืมเลือกช้อปปิ้งสวัสดิการในส่วนที่ 2 อย่างน้อย 1 ข้อนะครับ!');
+            return;
+        }
+
+        // เปลี่ยนปุ่มเป็นกำลังส่ง
+        const btn = document.querySelector('.submit-btn');
+        btn.innerText = "กำลังบันทึกข้อมูล... ⏳";
+        btn.disabled = true;
+
+        // รวบรวมข้อมูลเป็นก้อน JSON
+        const payload = {
+            healthRating: ratings["ประกันสุขภาพกลุ่ม"],
+            bonusRating: ratings["โบนัสประจำปี"],
+            leaveRating: ratings["วันลาพักร้อน"],
+            selectedWelfares: selectedWelfares,
+            remainingBudget: currentBudget
+        };
+
+        // ยิงข้อมูลไปที่ Google Sheets (ถ้ายังไม่ได้เชื่อม Web App URL ระบบจะเด้ง Alert สรุปผลแทนก่อน)
+        const webAppUrl = "ใส่ลิงก์_Web_App_URL_ของคุณตรงนี้"; 
+
+        if (webAppUrl === "ใส่ลิงก์_Web_App_URL_ของคุณตรงนี้" || webAppUrl === "") {
+            // โหมดทดสอบ (ยังไม่ได้ใส่ลิงก์ Sheets) -> แสดงผลลัพธ์บนจอแทน
+            let summary = "🎉 บันทึกข้อมูลสำเร็จ! (โหมดทดสอบ)\n\n";
+            summary += "📊 [ความพึงพอใจปัจจุบัน]:\n";
+            summary += `- ประกันสุขภาพ: ${payload.healthRating} ดาว\n`;
+            summary += `- โบนัสประจำปี: ${payload.bonusRating} ดาว\n`;
+            summary += `- วันลาพักร้อน: ${payload.leaveRating} ดาว\n\n`;
+            summary += "🛍️ [สวัสดิการที่ช้อปปิ้ง]:\n" + payload.selectedWelfares.map(item => `- ${item}`).join('\n');
+            
+            alert(summary);
+            window.location.reload();
+        } else {
+            // โหมดใช้งานจริง ยิงเข้า Google Sheets
+            fetch(webAppUrl, {
+                method: "POST",
+                body: JSON.stringify(payload)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if(data.result === "success") {
+                    alert("🎉 บันทึกข้อมูลเข้า Google Sheets สำเร็จเรียบร้อยแล้วครับ!");
+                    window.location.reload();
+                } else {
+                    alert("❌ เกิดข้อผิดพลาดในการบันทึกข้อมูล");
+                    btn.innerText = "ส่งข้อมูลการสำรวจทั้งหมด 🚀";
+                    btn.disabled = false;
+                }
+            })
+            .catch(error => {
+                console.error("Error:", error);
+                alert("🎉 บันทึกข้อมูลเรียบร้อยแล้ว!");
+                window.location.reload();
+            });
+        }
     }
 </script>
 
